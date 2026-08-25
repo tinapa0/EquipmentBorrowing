@@ -1,4 +1,5 @@
-﻿namespace EquipmentBorrowing.Tests
+﻿using Xunit;
+namespace EquipmentBorrowing.Tests
 {
     public class UnitTest1
     {
