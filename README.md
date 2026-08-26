@@ -9,15 +9,12 @@
 
 
 ## 2. Dependency Direction
+```text
 EquipmentBorrowing.App (Executable)
-│
-├──> EquipmentBorrowing.Infrastructure
-│               │
-│               ▼
-└──> EquipmentBorrowing.Application
-│
-▼
-EquipmentBorrowing.Domain
+ └──> EquipmentBorrowing.Infrastructure
+       └──> EquipmentBorrowing.Application
+             └──> EquipmentBorrowing.Domain
+```
 
 
 ## 3. Use Case Mapping
@@ -45,3 +42,4 @@ EquipmentBorrowing.Domain
 
 5. **What part of your implementation represents the actual business operation requested by the actor?**  
    The `BorrowEquipmentService.ExecuteAsync()` method inside the application layer represents the actual business operation, as it validates domain rules and coordinates state updates through repository abstractions.
+
