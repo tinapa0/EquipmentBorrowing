@@ -4,7 +4,17 @@
         xmlns:views="using:EquipmentBorrowing.Desktop.Views"
         x:Class="EquipmentBorrowing.Desktop.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="Campus Equipment Borrowing System" Width="800" Height="500">
+        Title="Campus Equipment Borrowing System" Width="850" Height="550">
+
+	<Window.Styles>
+		<!-- Shared Navigation Button Styling -->
+		<Style Selector="Button.nav">
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="Padding" Value="10,8"/>
+			<Setter Property="CornerRadius" Value="5"/>
+		</Style>
+	</Window.Styles>
 
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type vm:EquipmentViewModel}">
@@ -15,15 +25,23 @@
 		</DataTemplate>
 	</Window.DataTemplates>
 
-	<Grid ColumnDefinitions="200, *">
-		<!-- Sidebar Navigation -->
-		<StackPanel Grid.Column="0" Background="#F0F0F0" Spacing="10" Margin="10">
-			<TextBlock Text="Menu" FontSize="18" FontWeight="Bold" Margin="10"/>
-			<Button Content="Equipment" Command="{Binding NavigateToEquipmentCommand}" HorizontalAlignment="Stretch"/>
-			<Button Content="Active Borrowings" Command="{Binding NavigateToBorrowingsCommand}" HorizontalAlignment="Stretch"/>
-		</StackPanel>
+	<Grid ColumnDefinitions="220, *">
+		<!-- Sidebar Navigation Area -->
+		<Border Grid.Column="0" Background="#F4F4F6" Padding="15">
+			<StackPanel Spacing="12">
+				<TextBlock Text="Navigation" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
 
-		<!-- Main Content Area -->
-		<TransitioningContentControl Grid.Column="1" Content="{Binding CurrentView}" />
+				<Button Content="Equipment List"
+                        Command="{Binding NavigateToEquipmentCommand}"
+                        Classes="nav"/>
+
+				<Button Content="Active Borrowings"
+                        Command="{Binding NavigateToBorrowingsCommand}"
+                        Classes="nav"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Dynamic Content View Area -->
+		<TransitioningContentControl Grid.Column="1" Content="{Binding CurrentView}" Margin="10"/>
 	</Grid>
 </Window>
