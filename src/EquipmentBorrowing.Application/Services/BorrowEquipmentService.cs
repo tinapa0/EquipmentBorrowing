@@ -19,7 +19,7 @@ public class BorrowEquipmentService
         _borrowingRepository = borrowingRepository;
     }
 
-    public async Task<Borrowing> ExecuteAsync(int studentId, int equipmentId, int durationDays = 7)
+    public async Task<Borrowing> ExecuteAsync(int studentId, int equipmentId, DateTime? expectedReturnDate = null)
     {
         var student = await _studentRepository.GetByIdAsync(studentId)
             ?? throw new InvalidOperationException("Student does not exist.");
@@ -40,7 +40,15 @@ public class BorrowEquipmentService
         equipment.MarkAsBorrowed();
         await _equipmentRepository.UpdateAsync(equipment);
 
-        var borrowing = new Borrowing(Random.Shared.Next(1, 10000), student.Id, equipment.Id, DateTime.UtcNow.AddDays(durationDays));
+        // Fall back to 7 days from now if no specific date was passed
+        DateTime returnDate = expectedReturnDate ?? DateTime.UtcNow.AddDays(7);
+
+        var borrowing = new Borrowing(
+        Random.Shared.Next(1, 10000),
+        student.Id,
+        equipment.Id,
+        returnDate
+);
         await _borrowingRepository.AddAsync(borrowing);
 
         return borrowing;
