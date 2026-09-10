@@ -1,0 +1,36 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:EquipmentBorrowing.Desktop.ViewModels"
+             x:Class="EquipmentBorrowing.Desktop.Views.EquipmentView"
+             x:DataType="vm:EquipmentViewModel">
+	<StackPanel Margin="20" Spacing="15">
+		<TextBlock Text="Available Equipment" FontSize="20" FontWeight="Bold"/>
+
+		<ListBox ItemsSource="{Binding EquipmentList}" SelectedItem="{Binding SelectedEquipment}" Height="150">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal" Spacing="10">
+						<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+						<TextBlock Text="{Binding Category}"/>
+						<TextBlock Text="[Available]" Foreground="Green" IsVisible="{Binding IsAvailable}"/>
+						<TextBlock Text="[Borrowed]" Foreground="Red" IsVisible="{Binding !IsAvailable}"/>
+					</StackPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+		<TextBlock Text="Borrowing Details" FontSize="16" FontWeight="Bold"/>
+		<ComboBox ItemsSource="{Binding StudentList}" SelectedItem="{Binding SelectedStudent}" PlaceholderText="Select Student" HorizontalAlignment="Stretch">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+
+		<DatePicker SelectedDate="{Binding ExpectedReturnDate}"/>
+
+		<Button Content="Borrow Equipment" Command="{Binding BorrowCommand}" HorizontalAlignment="Left" Padding="10,5"/>
+		<TextBlock Text="{Binding StatusMessage}" Foreground="Blue" FontWeight="SemiBold"/>
+	</StackPanel>
+</UserControl>
