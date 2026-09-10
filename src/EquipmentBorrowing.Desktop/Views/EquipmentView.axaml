@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d"
+			 x:Class="EquipmentBorrowing.Desktop.Views.EquipmentView">
+
+	<StackPanel Padding="8" Spacing="8">
+		<TextBlock Text="Equipment" FontSize="18" FontWeight="SemiBold" />
+
+		<Border Background="#FFFFFF" Padding="6" CornerRadius="4">
+			<ListBox Items="{Binding Equipment}" Name="EquipmentList">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+							<TextBlock Text="{Binding Id}" Width="100"/> 
+							<TextBlock Text="{Binding Name}" Width="240"/>
+							<TextBlock Text="{Binding Description}" Opacity="0.85"/>
+						</StackPanel>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</Border>
+	</StackPanel>
+
+</UserControl>
