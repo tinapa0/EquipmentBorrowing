@@ -35,15 +35,17 @@ public class EquipmentViewModel : INotifyPropertyChanged
     public ICommand BorrowCommand { get; }
     public ICommand RefreshCommand { get; }
 
+    public string Status { get; private set; } = string.Empty;
+
     public EquipmentViewModel()
     {
         BorrowCommand = new RelayCommand(async _ => await BorrowAsync(), _ => Selected != null);
         RefreshCommand = new RelayCommand(async _ => await LoadAsync());
 
         // initial sample data (replace with application service calls later)
-        Equipment.Add(new EquipmentItem { Id = "EQ-001", Name = "Projector", Description = "LCD Projector" });
-        Equipment.Add(new EquipmentItem { Id = "EQ-002", Name = "Laptop", Description = "Dell Latitude" });
-        Equipment.Add(new EquipmentItem { Id = "EQ-003", Name = "Microphone", Description = "Wireless mic" });
+        Equipment.Add(new EquipmentItem { Id = "101", Name = "Projector", Description = "LCD Projector" });
+        Equipment.Add(new EquipmentItem { Id = "102", Name = "Laptop", Description = "Dell Latitude" });
+        Equipment.Add(new EquipmentItem { Id = "103", Name = "Microphone", Description = "Wireless mic" });
     }
 
     public async Task LoadAsync()
@@ -57,8 +59,37 @@ public class EquipmentViewModel : INotifyPropertyChanged
         if (Selected == null)
             return;
 
-        // TODO: invoke application service to borrow equipment
-        await Task.CompletedTask;
+        if (!int.TryParse(Selected.Id, out var equipmentId))
+        {
+            Status = "Invalid equipment id.";
+            OnPropertyChanged(nameof(Status));
+            return;
+        }
+
+        try
+        {
+            // create in-memory repositories and call application service
+            var studentRepo = new EquipmentBorrowing.Infrastructure.Repositories.InMemoryStudentRepository();
+            var equipmentRepo = new EquipmentBorrowing.Infrastructure.Repositories.InMemoryEquipmentRepository();
+            var borrowingRepo = new EquipmentBorrowing.Infrastructure.Repositories.InMemoryBorrowingRepository();
+
+            var service = new EquipmentBorrowing.Application.Services.BorrowEquipmentService(studentRepo, equipmentRepo, borrowingRepo);
+
+            // for demo purposes assume student id 1
+            var borrowing = await service.ExecuteAsync(1, equipmentId);
+
+            // remove from UI list to reflect borrowed status
+            Equipment.Remove(Selected);
+            Selected = null;
+
+            Status = $"Borrowed: {borrowing.Id}";
+            OnPropertyChanged(nameof(Status));
+        }
+        catch (Exception ex)
+        {
+            Status = ex.Message;
+            OnPropertyChanged(nameof(Status));
+        }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
