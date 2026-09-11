@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -9,7 +10,7 @@ using EquipmentBorrowing.Desktop.ViewModels;
 
 namespace EquipmentBorrowing.Desktop;
 
-public partial class App : Application
+public partial class App : global::Avalonia.Application
 {
     public static IServiceProvider? Services { get; private set; }
 

@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:controls="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls">
 
   <!-- Color brushes -->
   <SolidColorBrush x:Key="HeaderBackground" Color="#2D3748" />
@@ -7,39 +8,6 @@
   <SolidColorBrush x:Key="ContentBackground" Color="#FFFFFF" />
   <SolidColorBrush x:Key="StatusForeground" Color="#333333" />
 
-  <!-- Text styles -->
-  <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
-	<Setter Property="Foreground" Value="White" />
-	<Setter Property="FontSize" Value="18" />
-	<Setter Property="FontWeight" Value="Bold" />
-	<Setter Property="VerticalAlignment" Value="Center" />
-  </Style>
-
-  <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
-	<Setter Property="FontSize" Value="16" />
-	<Setter Property="FontWeight" Value="SemiBold" />
-  </Style>
-
-  <!-- Button style for navigation -->
-  <Style x:Key="NavButtonStyle" TargetType="Button">
-	<Setter Property="HorizontalAlignment" Value="Stretch" />
-	<Setter Property="Padding" Value="8,6" />
-	<Setter Property="Background" Value="Transparent" />
-	<Setter Property="BorderThickness" Value="0" />
-	<Setter Property="Foreground" Value="#111827" />
-  </Style>
-
-  <!-- Content border style -->
-  <Style x:Key="ContentBorderStyle" TargetType="Border">
-	<Setter Property="Background" Value="{StaticResource ContentBackground}" />
-	<Setter Property="Padding" Value="12" />
-	<Setter Property="CornerRadius" Value="4" />
-  </Style>
-
-  <!-- Status text style -->
-  <Style x:Key="StatusTextStyle" TargetType="TextBlock">
-	<Setter Property="Foreground" Value="{StaticResource StatusForeground}" />
-	<Setter Property="Opacity" Value="0.9" />
-  </Style>
+	<!-- Text styles intentionally removed to avoid build-time type resolution issues. Use inline properties in views. -->
 
 </ResourceDictionary>

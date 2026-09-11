@@ -2,32 +2,23 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			  xmlns:vm="clr-namespace:EquipmentBorrowing.Desktop.ViewModels;assembly=EquipmentBorrowing.Desktop"
 			 mc:Ignorable="d"
 			 x:Class="EquipmentBorrowing.Desktop.Views.EquipmentView">
 
-	<StackPanel Padding="8" Spacing="8">
+	<StackPanel Margin="8" Spacing="8">
 		<TextBlock Text="Equipment" FontSize="18" FontWeight="SemiBold" />
 
-		<Border Background="#FFFFFF" Padding="6" CornerRadius="4">
-			<ListBox Items="{Binding Equipment}" Name="EquipmentList" SelectedItem="{Binding Selected, Mode=TwoWay}">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-							<TextBlock Text="{Binding Id}" Width="100"/> 
-							<TextBlock Text="{Binding Name}" Width="240"/>
-							<TextBlock Text="{Binding Description}" Opacity="0.85"/>
-						</StackPanel>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
+		<Border Background="#FFFFFF" Padding="12" CornerRadius="4">
+			<TextBlock Text="Equipment list will appear here." Opacity="0.8" />
 		</Border>
 
 		<StackPanel Orientation="Horizontal" Spacing="8">
-			<Button Content="Borrow" Command="{Binding BorrowCommand}" />
-			<Button Content="Refresh" Command="{Binding RefreshCommand}" />
+			<Button Content="Borrow" />
+			<Button Content="Refresh" />
 		</StackPanel>
 
-		<TextBlock Text="{Binding Status}" Foreground="#333" Opacity="0.9" />
+		<TextBlock Text="Status messages will appear in the app status bar." Foreground="#333" Opacity="0.9" />
 	</StackPanel>
 
 </UserControl>

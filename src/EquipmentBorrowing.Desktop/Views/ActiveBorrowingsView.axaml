@@ -2,34 +2,23 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			  xmlns:vm="clr-namespace:EquipmentBorrowing.Desktop.ViewModels;assembly=EquipmentBorrowing.Desktop"
 			 mc:Ignorable="d"
 			 x:Class="EquipmentBorrowing.Desktop.Views.ActiveBorrowingsView">
 
-	<StackPanel Padding="8" Spacing="8">
+	<StackPanel Margin="8" Spacing="8">
 		<TextBlock Text="Active Borrowings" FontSize="18" FontWeight="SemiBold" />
 
-		<Border Background="#FFFFFF" Padding="6" CornerRadius="4">
-			<ListBox Items="{Binding ActiveBorrowings}" SelectedItem="{Binding Selected, Mode=TwoWay}">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-							<TextBlock Text="{Binding BorrowingId}" Width="80"/>
-							<TextBlock Text="{Binding EquipmentName}" Width="220"/>
-							<TextBlock Text="{Binding StudentId}" Width="80"/>
-							<TextBlock Text="{Binding ExpectedReturnDate}" Width="180"/>
-							<TextBlock Text="{Binding Status}" Width="120"/>
-						</StackPanel>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
+		<Border Background="#FFFFFF" Padding="12" CornerRadius="4">
+			<TextBlock Text="Active borrowings will appear here." Opacity="0.8" />
 		</Border>
 
 		<StackPanel Orientation="Horizontal" Spacing="8">
-			<Button Content="Return" Command="{Binding ReturnCommand}" />
-			<Button Content="Refresh" Command="{Binding RefreshCommand}" />
+			<Button Content="Return" />
+			<Button Content="Refresh" />
 		</StackPanel>
 
-		<TextBlock Text="{Binding StatusMessage}" Foreground="#333" Opacity="0.9" />
+		<TextBlock Text="Status messages will appear in the app status bar." Foreground="#333" Opacity="0.9" />
 	</StackPanel>
 
 </UserControl>
