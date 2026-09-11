@@ -2,7 +2,7 @@
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>
-  <Folder Name="/src/">
+  <Folder Name="/Solution Items/src/">
     <Project Path="src/EquipmentBorrowing.App/EquipmentBorrowing.App.csproj" />
     <Project Path="src/EquipmentBorrowing.Application/EquipmentBorrowing.Application.csproj" />
     <Project Path="src/EquipmentBorrowing.Desktop/EquipmentBorrowing.Desktop.csproj" />
