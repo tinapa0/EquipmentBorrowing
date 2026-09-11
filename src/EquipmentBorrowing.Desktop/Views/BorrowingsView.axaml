@@ -12,8 +12,8 @@
 					<StackPanel Orientation="Horizontal" Spacing="15">
 						<TextBlock Text="Borrowing ID:" FontWeight="Bold"/>
 						<TextBlock Text="{Binding Id}"/>
-						<TextBlock Text="Borrowed On:"/>
-						<TextBlock Text="{Binding BorrowedOn}"/>
+				<TextBlock Text="Borrowed On:"/>
+				<TextBlock Text="{Binding BorrowedDate}"/>
 					</StackPanel>
 				</DataTemplate>
 			</ListBox.ItemTemplate>

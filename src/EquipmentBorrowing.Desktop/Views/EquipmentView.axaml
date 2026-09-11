@@ -10,8 +10,8 @@
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal" Spacing="10">
-						<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-						<TextBlock Text="{Binding Category}"/>
+				<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+				<TextBlock Text="{Binding Id}"/>
 						<TextBlock Text="[Available]" Foreground="Green" IsVisible="{Binding IsAvailable}"/>
 						<TextBlock Text="[Borrowed]" Foreground="Red" IsVisible="{Binding !IsAvailable}"/>
 					</StackPanel>
