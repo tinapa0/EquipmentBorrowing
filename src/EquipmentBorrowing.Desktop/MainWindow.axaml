@@ -8,13 +8,13 @@
 
     <DockPanel LastChildFill="True">
         <!-- Header -->
-        <Border DockPanel.Dock="Top" Background="#2D3748" Padding="12">
-            <TextBlock Text="Equipment Borrowing" Foreground="White" FontSize="18" VerticalAlignment="Center" />
+        <Border DockPanel.Dock="Top" Background="{StaticResource HeaderBackground}" Padding="12">
+            <TextBlock Text="Equipment Borrowing" Style="{StaticResource HeaderTextStyle}" />
         </Border>
 
         <!-- Status bar -->
         <Border DockPanel.Dock="Bottom" Background="#F3F4F6" Padding="6">
-            <TextBlock Name="StatusText" Text="Ready" VerticalAlignment="Center" />
+            <TextBlock Name="StatusText" Text="Ready" Style="{StaticResource StatusTextStyle}" />
         </Border>
 
         <!-- Main area: navigation + content -->
@@ -25,16 +25,16 @@
             </Grid.ColumnDefinitions>
 
             <!-- Left navigation pane -->
-            <StackPanel Grid.Column="0" Background="#FAFAFA" Padding="10" Spacing="6">
+            <StackPanel Grid.Column="0" Background="{StaticResource NavigationBackground}" Padding="10" Spacing="6">
                 <TextBlock Text="Navigation" FontWeight="Bold" Margin="0,0,0,6" />
-                <Button Name="NavDashboard" Content="Dashboard" HorizontalAlignment="Stretch" />
-                <Button Name="NavEquipment" Content="Equipment" HorizontalAlignment="Stretch" />
-                <Button Name="NavBorrowers" Content="Borrowers" HorizontalAlignment="Stretch" />
-                <Button Name="NavBorrowings" Content="Borrowings" HorizontalAlignment="Stretch" />
+                <Button Name="NavDashboard" Content="Dashboard" Style="{StaticResource NavButtonStyle}" />
+                <Button Name="NavEquipment" Content="Equipment" Style="{StaticResource NavButtonStyle}" />
+                <Button Name="NavBorrowers" Content="Borrowers" Style="{StaticResource NavButtonStyle}" />
+                <Button Name="NavBorrowings" Content="Borrowings" Style="{StaticResource NavButtonStyle}" />
             </StackPanel>
 
             <!-- Content area -->
-            <Border Grid.Column="1" Padding="12">
+            <Border Grid.Column="1" Padding="12" Style="{StaticResource ContentBorderStyle}">
                 <ScrollViewer>
                     <StackPanel Spacing="8">
                         <TextBlock Text="Welcome" FontSize="20" FontWeight="SemiBold" />
