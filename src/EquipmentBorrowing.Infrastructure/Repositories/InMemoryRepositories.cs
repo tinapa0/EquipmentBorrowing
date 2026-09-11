@@ -42,4 +42,24 @@ public class InMemoryBorrowingRepository : IBorrowingRepository
 
     public Task<int> GetActiveCountByStudentIdAsync(int studentId, CancellationToken cancellationToken = default)
         => Task.FromResult(_borrowings.Count(b => b.StudentId == studentId && b.Status == BorrowingStatus.Active));
+
+    public Task<Borrowing?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        => Task.FromResult(_borrowings.FirstOrDefault(b => b.Id == id));
+
+    public Task UpdateAsync(Borrowing borrowing, CancellationToken cancellationToken = default)
+    {
+        // For in-memory repository, the object reference is already updated.
+        // Ensure borrowing exists otherwise throw.
+        var index = _borrowings.FindIndex(b => b.Id == borrowing.Id);
+        if (index >= 0)
+        {
+            _borrowings[index] = borrowing;
+        }
+        else
+        {
+            throw new InvalidOperationException("Borrowing does not exist.");
+        }
+
+        return Task.CompletedTask;
+    }
 }
