@@ -10,11 +10,16 @@
 
 ## 2. Dependency Direction
 ```text
-EquipmentBorrowing.App (Executable)
- └──> EquipmentBorrowing.Infrastructure
-       └──> EquipmentBorrowing.Application
-             └──> EquipmentBorrowing.Domain
+EquipmentBorrowing.Desktop (Avalonia UI)
+│
+├──────────────► EquipmentBorrowing.Application
+│
+└──────────────► EquipmentBorrowing.Infrastructure
+     └──> EquipmentBorrowing.Application
+           └──> EquipmentBorrowing.Domain
 ```
+
+Note: This repository has been extended with an Avalonia presentation project `EquipmentBorrowing.Desktop`. The desktop project depends on the Application and Infrastructure layers only. It uses Microsoft.Extensions.DependencyInjection to obtain application services and, for the laboratory/demo, the in-memory repository implementations from the Infrastructure project so UI interactions (borrow/return) can be demonstrated without a database.
 
 
 ## 3. Use Case Mapping

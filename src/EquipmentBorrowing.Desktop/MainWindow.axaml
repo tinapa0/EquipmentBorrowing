@@ -1,0 +1,50 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="768"
+        x:Class="EquipmentBorrowing.Desktop.MainWindow"
+        Title="Equipment Borrowing">
+
+    <DockPanel LastChildFill="True">
+        <!-- Header -->
+        <Border DockPanel.Dock="Top" Background="{StaticResource HeaderBackground}" Padding="12">
+            <TextBlock Text="Equipment Borrowing" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" />
+        </Border>
+
+        <!-- Status bar -->
+        <Border DockPanel.Dock="Bottom" Background="#F3F4F6" Padding="6">
+            <TextBlock Name="StatusText" Text="Ready" Foreground="{StaticResource StatusForeground}" Opacity="0.9" />
+        </Border>
+
+        <!-- Main area: navigation + content -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Left navigation pane -->
+            <StackPanel Grid.Column="0" Background="{StaticResource NavigationBackground}" Margin="10" Spacing="6">
+                <TextBlock Text="Navigation" FontWeight="Bold" Margin="0,0,0,6" />
+                <Button Name="NavDashboard" Content="Dashboard" HorizontalAlignment="Stretch" Padding="8,6" Background="Transparent" BorderThickness="0" Foreground="#111827" />
+                <Button Name="NavEquipment" Content="Equipment" HorizontalAlignment="Stretch" Padding="8,6" Background="Transparent" BorderThickness="0" Foreground="#111827" />
+                <Button Name="NavBorrowers" Content="Borrowers" HorizontalAlignment="Stretch" Padding="8,6" Background="Transparent" BorderThickness="0" Foreground="#111827" />
+                <Button Name="NavBorrowings" Content="Borrowings" HorizontalAlignment="Stretch" Padding="8,6" Background="Transparent" BorderThickness="0" Foreground="#111827" />
+            </StackPanel>
+
+            <!-- Content area -->
+            <Border Grid.Column="1" Padding="12" Background="{StaticResource ContentBackground}" CornerRadius="4">
+                <ScrollViewer>
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Welcome" FontSize="20" FontWeight="SemiBold" />
+                        <TextBlock Text="Select an item from the navigation to begin." Opacity="0.8" />
+                        <!-- Placeholder for views injected by MVVM -->
+                        <ContentControl Name="MainContent" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </DockPanel>
+
+</Window>
