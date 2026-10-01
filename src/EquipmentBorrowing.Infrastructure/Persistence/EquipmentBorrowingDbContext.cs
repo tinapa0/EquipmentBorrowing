@@ -1,4 +1,4 @@
-using EquipmentBorrowing.Domain.Entities; // Adjust namespace to match your domain entities
+using EquipmentBorrowing.Domain; // Adjust namespace to match your domain entities
 using Microsoft.EntityFrameworkCore;
 
 namespace EquipmentBorrowing.Infrastructure.Persistence;
