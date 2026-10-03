@@ -361,3 +361,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/src/EquipmentBorrowing.Desktop/equipment_borrowing.db
