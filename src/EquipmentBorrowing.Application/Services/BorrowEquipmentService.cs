@@ -1,56 +1,49 @@
 ﻿using EquipmentBorrowing.Application.Interfaces;
 using EquipmentBorrowing.Domain;
+using System;
+using System.Threading.Tasks;
 
 namespace EquipmentBorrowing.Application.Services;
 
 public class BorrowEquipmentService
 {
-    private readonly IStudentRepository _studentRepository;
-    private readonly IEquipmentRepository _equipmentRepository;
     private readonly IBorrowingRepository _borrowingRepository;
+    private readonly IEquipmentRepository _equipmentRepository;
+    private readonly IStudentRepository _studentRepository;
 
     public BorrowEquipmentService(
-        IStudentRepository studentRepository,
+        IBorrowingRepository borrowingRepository,
         IEquipmentRepository equipmentRepository,
-        IBorrowingRepository borrowingRepository)
+        IStudentRepository studentRepository)
     {
-        _studentRepository = studentRepository;
-        _equipmentRepository = equipmentRepository;
         _borrowingRepository = borrowingRepository;
+        _equipmentRepository = equipmentRepository;
+        _studentRepository = studentRepository;
     }
 
-    public async Task<Borrowing> ExecuteAsync(int studentId, int equipmentId, DateTime? expectedReturnDate = null)
+    public async Task ExecuteAsync(int studentId, int equipmentId, DateTime? expectedReturnDate)
     {
-        var student = await _studentRepository.GetByIdAsync(studentId)
-            ?? throw new InvalidOperationException("Student does not exist.");
+        var student = await _studentRepository.GetByIdAsync(studentId);
+        var equipment = await _equipmentRepository.GetByIdAsync(equipmentId);
 
-        if (!student.IsAllowedToBorrow)
-            throw new InvalidOperationException("Student is not currently allowed to borrow equipment.");
-
-        var equipment = await _equipmentRepository.GetByIdAsync(equipmentId)
-            ?? throw new InvalidOperationException("Equipment does not exist.");
-
-        if (!equipment.IsAvailable)
-            throw new InvalidOperationException("Equipment is currently unavailable.");
-
-        int activeCount = await _borrowingRepository.GetActiveCountByStudentIdAsync(studentId);
-        if (activeCount >= student.MaxAllowedBorrowings)
-            throw new InvalidOperationException("Student has reached the maximum allowed active borrowings.");
+        if (student == null) throw new Exception("Selected student was not found.");
+        if (equipment == null) throw new Exception("Selected equipment was not found.");
+        if (!equipment.IsAvailable) throw new Exception("Equipment is currently borrowed.");
 
         equipment.MarkAsBorrowed();
         await _equipmentRepository.UpdateAsync(equipment);
 
-        // Fall back to 7 days from now if no specific date was passed
-        DateTime returnDate = expectedReturnDate ?? DateTime.UtcNow.AddDays(7);
-
         var borrowing = new Borrowing(
-        Random.Shared.Next(1, 10000),
-        student.Id,
-        equipment.Id,
-        returnDate
-);
-        await _borrowingRepository.AddAsync(borrowing);
+            0,
+            studentId,
+            equipmentId,
+            expectedReturnDate ?? DateTime.UtcNow.AddDays(7)
+        )
+        {
+            Student = student,
+            Equipment = equipment
+        };
 
-        return borrowing;
+        await _borrowingRepository.AddAsync(borrowing);
     }
 }

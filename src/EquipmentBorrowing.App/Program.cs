@@ -5,13 +5,15 @@ var studentRepo = new InMemoryStudentRepository();
 var equipmentRepo = new InMemoryEquipmentRepository();
 var borrowingRepo = new InMemoryBorrowingRepository();
 
-var borrowService = new BorrowEquipmentService(studentRepo, equipmentRepo, borrowingRepo);
+// 1. Fixed constructor parameter order: (IBorrowingRepository, IEquipmentRepository, IStudentRepository)
+var borrowService = new BorrowEquipmentService(borrowingRepo, equipmentRepo, studentRepo);
 
 Console.WriteLine("--- SUCCESS CASE DEMO ---");
 try
 {
-    var borrowing = await borrowService.ExecuteAsync(studentId: 1, equipmentId: 101);
-    Console.WriteLine($"SUCCESS: Borrowing created with ID #{borrowing.Id} for Equipment #{borrowing.EquipmentId}");
+    // 2. Added expectedReturnDate argument and removed return assignment (ExecuteAsync is a void Task)
+    await borrowService.ExecuteAsync(studentId: 1, equipmentId: 101, expectedReturnDate: DateTime.UtcNow.AddDays(7));
+    Console.WriteLine("SUCCESS: Borrowing created for Equipment #101");
 }
 catch (Exception ex)
 {
@@ -21,7 +23,7 @@ catch (Exception ex)
 Console.WriteLine("\n--- FAILURE CASE DEMO (Unavailable Equipment) ---");
 try
 {
-    await borrowService.ExecuteAsync(studentId: 1, equipmentId: 102);
+    await borrowService.ExecuteAsync(studentId: 1, equipmentId: 102, expectedReturnDate: DateTime.UtcNow.AddDays(7));
 }
 catch (Exception ex)
 {
@@ -31,7 +33,7 @@ catch (Exception ex)
 Console.WriteLine("\n--- FAILURE CASE DEMO (Disallowed Student) ---");
 try
 {
-    await borrowService.ExecuteAsync(studentId: 2, equipmentId: 101);
+    await borrowService.ExecuteAsync(studentId: 2, equipmentId: 101, expectedReturnDate: DateTime.UtcNow.AddDays(7));
 }
 catch (Exception ex)
 {
