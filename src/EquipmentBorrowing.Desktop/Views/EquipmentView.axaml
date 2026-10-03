@@ -3,15 +3,23 @@
              xmlns:vm="using:EquipmentBorrowing.Desktop.ViewModels"
              x:Class="EquipmentBorrowing.Desktop.Views.EquipmentView"
              x:DataType="vm:EquipmentViewModel">
+
 	<StackPanel Margin="20" Spacing="15">
 		<TextBlock Text="Available Equipment" FontSize="20" FontWeight="Bold"/>
 
-		<ListBox ItemsSource="{Binding EquipmentList}" SelectedItem="{Binding SelectedEquipment}" Height="150">
+		<ListBox ItemsSource="{Binding EquipmentList}" SelectedItem="{Binding SelectedEquipment}">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal" Spacing="10">
-				<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-				<TextBlock Text="{Binding Id}"/>
+						<!-- 1. Equipment ID -->
+						<TextBlock Text="{Binding Id}" FontWeight="Bold"/>
+						<TextBlock Text="-"/>
+
+						<!-- 2. Equipment Name -->
+						<TextBlock Text="{Binding Name}"/>
+						<TextBlock Text="-"/>
+
+						<!-- 3. Equipment Status -->
 						<TextBlock Text="[Available]" Foreground="Green" IsVisible="{Binding IsAvailable}"/>
 						<TextBlock Text="[Borrowed]" Foreground="Red" IsVisible="{Binding !IsAvailable}"/>
 					</StackPanel>
@@ -20,6 +28,7 @@
 		</ListBox>
 
 		<TextBlock Text="Borrowing Details" FontSize="16" FontWeight="Bold"/>
+
 		<ComboBox ItemsSource="{Binding StudentList}" SelectedItem="{Binding SelectedStudent}" PlaceholderText="Select Student" HorizontalAlignment="Stretch">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>

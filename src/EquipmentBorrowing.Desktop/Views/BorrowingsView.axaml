@@ -3,17 +3,25 @@
              xmlns:vm="using:EquipmentBorrowing.Desktop.ViewModels"
              x:Class="EquipmentBorrowing.Desktop.Views.BorrowingsView"
              x:DataType="vm:BorrowingsViewModel">
+
 	<StackPanel Margin="20" Spacing="15">
 		<TextBlock Text="Active Borrowings" FontSize="20" FontWeight="Bold"/>
 
-		<ListBox ItemsSource="{Binding ActiveBorrowings}" SelectedItem="{Binding SelectedBorrowing}" Height="200">
+		<ListBox ItemsSource="{Binding ActiveBorrowings}" SelectedItem="{Binding SelectedBorrowing}">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<StackPanel Orientation="Horizontal" Spacing="15">
-						<TextBlock Text="Borrowing ID:" FontWeight="Bold"/>
-						<TextBlock Text="{Binding Id}"/>
-				<TextBlock Text="Borrowed On:"/>
-				<TextBlock Text="{Binding BorrowedDate}"/>
+					<StackPanel Orientation="Horizontal" Spacing="10">
+						<!-- Student ID -->
+						<TextBlock Text="{Binding StudentId}" FontWeight="Bold"/>
+						<TextBlock Text="-"/>
+						<!-- Student Name -->
+						<TextBlock Text="{Binding Student.Name}" FontWeight="SemiBold"/>
+						<TextBlock Text="-"/>
+						<!-- Equipment Name -->
+						<TextBlock Text="{Binding Equipment.Name}"/>
+						<TextBlock Text="-"/>
+						<!-- Date Borrowed -->
+						<TextBlock Text="{Binding BorrowedDate, StringFormat=\{0:MM/dd/yyyy\}}"/>
 					</StackPanel>
 				</DataTemplate>
 			</ListBox.ItemTemplate>

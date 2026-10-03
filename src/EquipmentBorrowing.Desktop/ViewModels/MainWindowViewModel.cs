@@ -24,7 +24,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToBorrowings()
     {
-        await BorrowingsVm.LoadBorrowingsAsync();
         CurrentView = BorrowingsVm;
+        await BorrowingsVm.LoadBorrowingsAsync();
     }
 }

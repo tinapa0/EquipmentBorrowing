@@ -3,19 +3,18 @@ using CommunityToolkit.Mvvm.Input;
 using EquipmentBorrowing.Application.Interfaces;
 using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Domain;
-using EquipmentBorrowing.Infrastructure.Repositories;
 using System;
 using System.Collections.ObjectModel;
-
 using System.Threading.Tasks;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class EquipmentViewModel : ObservableObject
 {
-    private readonly BorrowEquipmentService _borrowService;
     private readonly IEquipmentRepository _equipmentRepository;
     private readonly IStudentRepository _studentRepository;
+    private readonly BorrowEquipmentService _borrowService;
+    private readonly BorrowingsViewModel _borrowingsViewModel;
 
     [ObservableProperty] private ObservableCollection<Equipment> _equipmentList = new();
     [ObservableProperty] private ObservableCollection<Student> _studentList = new();
@@ -25,13 +24,19 @@ public partial class EquipmentViewModel : ObservableObject
     [ObservableProperty] private string? _statusMessage;
 
     public EquipmentViewModel(
-        BorrowEquipmentService borrowService,
         IEquipmentRepository equipmentRepository,
-        IStudentRepository studentRepository)
+        IStudentRepository studentRepository,
+        BorrowEquipmentService borrowService,
+        BorrowingsViewModel borrowingsViewModel)
     {
-        _borrowService = borrowService;
         _equipmentRepository = equipmentRepository;
         _studentRepository = studentRepository;
+        _borrowService = borrowService;
+        _borrowingsViewModel = borrowingsViewModel;
+
+        // Connect ViewModels so returns update this view in real time
+        _borrowingsViewModel.SetEquipmentViewModel(this);
+
         _ = LoadDataAsync();
     }
 
@@ -49,26 +54,37 @@ public partial class EquipmentViewModel : ObservableObject
     [RelayCommand]
     private async Task BorrowAsync()
     {
-        if (SelectedStudent == null) { StatusMessage = "Validation Error: Please select a student."; return; }
-        if (SelectedEquipment == null) { StatusMessage = "Validation Error: Please select an equipment item."; return; }
+        if (SelectedStudent == null)
+        {
+            StatusMessage = "Validation Error: Please select a student.";
+            return;
+        }
+
+        if (SelectedEquipment == null)
+        {
+            StatusMessage = "Validation Error: Please select an equipment item.";
+            return;
+        }
 
         try
         {
-            // Calculate days difference (defaulting to 7 days if ExpectedReturnDate is null)
             int durationDays = ExpectedReturnDate.HasValue
                 ? (int)Math.Ceiling((ExpectedReturnDate.Value.DateTime - DateTime.UtcNow).TotalDays)
                 : 7;
 
-            // Ensure duration is at least 1 day
             if (durationDays <= 0)
             {
                 StatusMessage = "Validation Error: Expected return date must be in the future.";
                 return;
             }
 
-            // Correct - passing DateTime directly:
             await _borrowService.ExecuteAsync(SelectedStudent.Id, SelectedEquipment.Id, ExpectedReturnDate?.DateTime);
             StatusMessage = $"Successfully borrowed {SelectedEquipment.Name}!";
+
+            // Reload Active Borrowings list with populated Student/Equipment navigation data
+            await _borrowingsViewModel.LoadBorrowingsAsync();
+
+            // Refresh equipment list status tags
             await LoadDataAsync();
         }
         catch (Exception ex)
