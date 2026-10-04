@@ -153,3 +153,4 @@ In Laboratory Activity 3, the Campus Equipment Borrowing System successfully evo
 
 5. **Dependency Injection & Maintainability**
    Centralizing dependency registrations inside a single composition root made it seamless to swap out temporary in-memory repository singletons for scoped EF Core database contexts and repositories. If the application ever needs to migrate to another relational database provider (like PostgreSQL or SQL Server) in the future, the change will remain restricted entirely to the infrastructure configuration layer without affecting the rest of the system.
+
