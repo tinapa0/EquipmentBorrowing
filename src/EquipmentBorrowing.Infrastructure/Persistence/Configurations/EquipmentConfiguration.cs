@@ -15,7 +15,9 @@ public class EquipmentConfiguration : IEntityTypeConfiguration<Equipment>
         builder.HasData(
             new { Id = 1, Name = "Projector HD-1080", IsAvailable = true },
             new { Id = 2, Name = "DSLR Camera Canon", IsAvailable = true },
-            new { Id = 3, Name = "Wireless Microphone", IsAvailable = true }
+            new { Id = 3, Name = "Wireless Microphone", IsAvailable = true },
+            new { Id = 4, Name = "Extension Wire", IsAvailable = true },
+            new { Id = 5, Name = "Speaker", IsAvailable = true }
         );
     }
 }
