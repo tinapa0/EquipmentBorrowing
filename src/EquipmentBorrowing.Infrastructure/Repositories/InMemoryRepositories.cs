@@ -7,8 +7,8 @@ public class InMemoryStudentRepository : IStudentRepository
 {
     private readonly List<Student> _students = new()
     {
-        new Student(1, "Alice", isAllowedToBorrow: true, maxAllowedBorrowings: 2),
-        new Student(2, "Bob", isAllowedToBorrow: false, maxAllowedBorrowings: 2)
+        new Student(1, "2026-0001", "Alice", isAllowedToBorrow: true, maxAllowedBorrowings: 2),
+        new Student(2, "2026-0002", "Bob", isAllowedToBorrow: false, maxAllowedBorrowings: 2)
     };
 
     public Task<Student?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -22,8 +22,8 @@ public class InMemoryEquipmentRepository : IEquipmentRepository
 {
     private readonly List<Equipment> _equipmentList = new()
     {
-        new Equipment(101, "Oscilloscope", isAvailable: true),
-        new Equipment(102, "Digital Multimeter", isAvailable: false)
+        new Equipment(101, "EQ-101", "Oscilloscope", isAvailable: true),
+        new Equipment(102, "EQ-102", "Digital Multimeter", isAvailable: false)
     };
 
     public Task<Equipment?> GetByIdAsync(int id, CancellationToken cancellationToken = default)

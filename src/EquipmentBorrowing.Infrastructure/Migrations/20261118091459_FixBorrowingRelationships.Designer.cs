@@ -5,42 +5,49 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace EquipmentBorrowing.Infrastructure.Migrations
 {
     [DbContext(typeof(EquipmentBorrowingDbContext))]
-    [Migration("20261001051457_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20261118091459_FixBorrowingRelationships")]
+    partial class FixBorrowingRelationships
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("EquipmentBorrowing.Domain.Borrowing", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("BorrowedDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("EquipmentId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("ExpectedReturnDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("StudentId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -55,15 +62,24 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EquipmentIdentifier")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsAvailable")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
@@ -73,20 +89,37 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            EquipmentIdentifier = "EQ-001",
                             IsAvailable = true,
                             Name = "Projector HD-1080"
                         },
                         new
                         {
                             Id = 2,
+                            EquipmentIdentifier = "EQ-002",
                             IsAvailable = true,
                             Name = "DSLR Camera Canon"
                         },
                         new
                         {
                             Id = 3,
+                            EquipmentIdentifier = "EQ-003",
                             IsAvailable = true,
                             Name = "Wireless Microphone"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            EquipmentIdentifier = "EQ-004",
+                            IsAvailable = true,
+                            Name = "Extension Wire"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            EquipmentIdentifier = "EQ-005",
+                            IsAvailable = true,
+                            Name = "Speaker"
                         });
                 });
 
@@ -94,20 +127,33 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
-                    b.Property<bool>("IsAllowedToBorrow")
-                        .HasColumnType("INTEGER");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("MaxAllowedBorrowings")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ContactInfo")
+                        .HasColumnType("text");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsAllowedToBorrow")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MaxAllowedBorrowings")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StudentNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StudentNumber")
+                        .IsUnique();
 
                     b.ToTable("Students");
 
@@ -115,32 +161,38 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            FullName = "Maria Kristina Sedeno",
                             IsAllowedToBorrow = true,
                             MaxAllowedBorrowings = 3,
-                            Name = "Maria Kristina Sedeno"
+                            StudentNumber = "2026-0001"
                         },
                         new
                         {
                             Id = 2,
+                            FullName = "Ritch Vaughn Agne",
                             IsAllowedToBorrow = true,
                             MaxAllowedBorrowings = 3,
-                            Name = "Ritch Vaughn Agne"
+                            StudentNumber = "2026-0002"
                         });
                 });
 
             modelBuilder.Entity("EquipmentBorrowing.Domain.Borrowing", b =>
                 {
-                    b.HasOne("EquipmentBorrowing.Domain.Equipment", null)
+                    b.HasOne("EquipmentBorrowing.Domain.Equipment", "Equipment")
                         .WithMany()
                         .HasForeignKey("EquipmentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("EquipmentBorrowing.Domain.Student", null)
+                    b.HasOne("EquipmentBorrowing.Domain.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Equipment");
+
+                    b.Navigation("Student");
                 });
 #pragma warning restore 612, 618
         }
