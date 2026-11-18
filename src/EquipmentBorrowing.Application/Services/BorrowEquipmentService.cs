@@ -37,9 +37,20 @@ public class BorrowEquipmentService
         if (!equipment.IsAvailable)
             throw new InvalidOperationException("Equipment is currently unavailable.");
 
-        // 3. BR-11: Verify expected return date is in the future (later than checkout date)
+        // 3. BR-11: Verify expected return date is in the future
         DateTime returnDate = expectedReturnDate ?? DateTime.UtcNow.AddDays(7);
-        if (returnDate.Date <= DateTime.Now.Date)
+
+        // Force DateTimeKind to Utc so PostgreSQL accepts it
+        if (returnDate.Kind == DateTimeKind.Unspecified)
+        {
+            returnDate = DateTime.SpecifyKind(returnDate, DateTimeKind.Utc);
+        }
+        else
+        {
+            returnDate = returnDate.ToUniversalTime();
+        }
+
+        if (returnDate.Date <= DateTime.UtcNow.Date)
             throw new InvalidOperationException("Expected return date must be later than today.");
 
         // 4. BR-09: Enforce maximum of 3 active borrowings per student
@@ -51,16 +62,13 @@ public class BorrowEquipmentService
         equipment.MarkAsBorrowed();
         await _equipmentRepository.UpdateAsync(equipment);
 
+        
         var borrowing = new Borrowing(
             0,
             studentId,
             equipmentId,
             returnDate
-        )
-        {
-            Student = student,
-            Equipment = equipment
-        };
+        );
 
         await _borrowingRepository.AddAsync(borrowing);
     }
