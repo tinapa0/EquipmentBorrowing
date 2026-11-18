@@ -29,6 +29,13 @@ public class EfEquipmentRepository : IEquipmentRepository
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
     }
 
+    public async Task AddAsync(Equipment equipment, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        context.Equipment.Add(equipment);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task UpdateAsync(Equipment equipment, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);

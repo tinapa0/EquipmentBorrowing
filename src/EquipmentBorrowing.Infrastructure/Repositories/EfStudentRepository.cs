@@ -22,6 +22,20 @@ public class EfStudentRepository : IStudentRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task AddAsync(Student student, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        context.Students.Add(student);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(Student student, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        context.Students.Update(student);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<Student?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
