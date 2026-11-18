@@ -1,0 +1,64 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:EquipmentBorrowing.Desktop.ViewModels"
+             x:Class="EquipmentBorrowing.Desktop.Views.StudentHistoryView"
+             x:DataType="vm:StudentHistoryViewModel">
+
+	<Grid Margin="15" RowDefinitions="Auto, *, Auto" ColumnDefinitions="300, *">
+		<!-- Title -->
+		<TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Student Borrowing History (UC-07)" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
+
+		<!-- Left: Student Selection List -->
+		<Border Grid.Row="1" Grid.Column="0" BorderBrush="#DDD" BorderThickness="1" CornerRadius="5" Padding="10" Margin="0,0,15,0">
+			<DockPanel>
+				<TextBlock DockPanel.Dock="Top" Text="Select Student" FontWeight="Bold" Margin="0,0,0,8"/>
+				<ListBox ItemsSource="{Binding Students}" SelectedItem="{Binding SelectedStudent, Mode=TwoWay}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Vertical" Spacing="2">
+								<TextBlock Text="{Binding FullName}" FontWeight="Bold"/>
+								<TextBlock Text="{Binding StudentNumber}" FontSize="11" Foreground="Gray"/>
+							</StackPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</DockPanel>
+		</Border>
+
+		<!-- Right: History Records -->
+		<Border Grid.Row="1" Grid.Column="1" BorderBrush="#DDD" BorderThickness="1" CornerRadius="5" Padding="10">
+			<DockPanel>
+				<TextBlock DockPanel.Dock="Top" Text="Borrowing History Records" FontWeight="Bold" Margin="0,0,0,8"/>
+				<ListBox ItemsSource="{Binding BorrowingHistory}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Border BorderBrush="#EEE" BorderThickness="0,0,0,1" Padding="5" Margin="0,2">
+								<Grid ColumnDefinitions="*, *, *, *">
+									<StackPanel Grid.Column="0">
+										<TextBlock Text="Reference ID:" FontSize="10" Foreground="Gray"/>
+										<TextBlock Text="{Binding Id}" FontWeight="Bold"/>
+									</StackPanel>
+									<StackPanel Grid.Column="1">
+										<TextBlock Text="Borrowed Date:" FontSize="10" Foreground="Gray"/>
+										<TextBlock Text="{Binding BorrowedDate, StringFormat='d'}"/>
+									</StackPanel>
+									<StackPanel Grid.Column="2">
+										<TextBlock Text="Expected Return:" FontSize="10" Foreground="Gray"/>
+										<TextBlock Text="{Binding ExpectedReturnDate, StringFormat='d'}"/>
+									</StackPanel>
+									<StackPanel Grid.Column="3">
+										<TextBlock Text="Status:" FontSize="10" Foreground="Gray"/>
+										<TextBlock Text="{Binding Status}" FontWeight="Bold"/>
+									</StackPanel>
+								</Grid>
+							</Border>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</DockPanel>
+		</Border>
+
+		<!-- Status Footer -->
+		<TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding StatusMessage}" Foreground="DarkBlue" FontWeight="Bold" Margin="0,15,0,0"/>
+	</Grid>
+</UserControl>
