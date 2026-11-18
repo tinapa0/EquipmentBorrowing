@@ -15,7 +15,7 @@
 						<TextBlock Text="{Binding StudentId}" FontWeight="Bold"/>
 						<TextBlock Text="-"/>
 						<!-- Student Name -->
-						<TextBlock Text="{Binding Student.Name}" FontWeight="SemiBold"/>
+						<TextBlock Text="{Binding Student.FullName}" FontWeight="SemiBold"/>
 						<TextBlock Text="-"/>
 						<!-- Equipment Name -->
 						<TextBlock Text="{Binding Equipment.Name}"/>

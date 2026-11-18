@@ -33,9 +33,8 @@ public partial class BorrowingsViewModel : ObservableObject
 
     public async Task LoadBorrowingsAsync()
     {
-        ActiveBorrowings.Clear();
         var items = await _borrowingRepository.GetActiveBorrowingsAsync();
-        foreach (var item in items) ActiveBorrowings.Add(item);
+        ActiveBorrowings = new ObservableCollection<Borrowing>(items);
     }
 
     [RelayCommand]

@@ -23,50 +23,52 @@ public partial class App : Avalonia.Application
     {
         var services = new ServiceCollection();
 
-        services.AddDbContext<EquipmentBorrowingDbContext>(options =>
+        // 1. Register DbContext using AddDbContextFactory to support multi-threaded / concurrent view loading
+        services.AddDbContextFactory<EquipmentBorrowingDbContext>(options =>
         {
-            options.UseSqlite("Data Source=equipment_borrowing.db")
+            options.UseNpgsql("Host=localhost;Database=equipment_borrowing_db;Username=postgres;Password=admin123")
                    .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information);
         });
 
-        // Repositories
-        services.AddScoped<IStudentRepository, EfStudentRepository>();
-        services.AddScoped<IEquipmentRepository, EfEquipmentRepository>();
-        services.AddScoped<IBorrowingRepository, EfBorrowingRepository>();
+        // 2. Repositories (Transient or Scoped since they inject the thread-safe IDbContextFactory)
+        services.AddTransient<IStudentRepository, EfStudentRepository>();
+        services.AddTransient<IEquipmentRepository, EfEquipmentRepository>();
+        services.AddTransient<IBorrowingRepository, EfBorrowingRepository>();
 
-        // Application Services
+        // 3. Application Services
         services.AddTransient<BorrowEquipmentService>();
         services.AddTransient<ReturnEquipmentService>();
 
-        // Singletons maintain UI state across navigation views
+        // 4. Singletons maintain UI state across navigation views
         services.AddSingleton<EquipmentViewModel>();
         services.AddSingleton<BorrowingsViewModel>();
         services.AddSingleton<MainWindowViewModel>();
 
         var provider = services.BuildServiceProvider();
 
-        // 1. Initialize Database and Seed Data
+        // 5. Initialize Database and Seed Data using the Context Factory
         try
         {
-            using (var scope = provider.CreateScope())
+            var contextFactory = provider.GetRequiredService<IDbContextFactory<EquipmentBorrowingDbContext>>();
+            using (var context = contextFactory.CreateDbContext())
             {
-                var context = scope.ServiceProvider.GetRequiredService<EquipmentBorrowingDbContext>();
-                context.Database.EnsureCreated();
+                // Replaced EnsureCreated() with Migrate() to use formal EF Core migrations
+                context.Database.Migrate();
 
                 if (!context.Students.Any())
                 {
                     context.Students.AddRange(
-                        new Domain.Student(1, "Maria Sedeno"),
-                        new Domain.Student(2, "John Doe")
+                        new Domain.Student(1, "2026-0001", "Maria Sedeno"),
+                        new Domain.Student(2, "2026-0002", "John Doe")
                     );
                 }
 
                 if (!context.Equipment.Any())
                 {
                     context.Equipment.AddRange(
-                        new Domain.Equipment(1, "Projector HD-1080"),
-                        new Domain.Equipment(2, "DSLR Camera Canon"),
-                        new Domain.Equipment(3, "Wireless Microphone")
+                        new Domain.Equipment(1, "EQ-001", "Projector HD-1080"),
+                        new Domain.Equipment(2, "EQ-002", "DSLR Camera Canon"),
+                        new Domain.Equipment(3, "EQ-003", "Wireless Microphone")
                     );
                 }
 
@@ -78,7 +80,7 @@ public partial class App : Avalonia.Application
             System.Diagnostics.Debug.WriteLine($"Database Init Exception: {ex.Message}");
         }
 
-        // 2. Assign Main Window to Desktop Lifetime
+        // 6. Assign Main Window to Desktop Lifetime
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow

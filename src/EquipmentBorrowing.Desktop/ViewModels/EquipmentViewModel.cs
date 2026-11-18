@@ -5,6 +5,7 @@ using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Domain;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
@@ -19,9 +20,15 @@ public partial class EquipmentViewModel : ObservableObject
     [ObservableProperty] private ObservableCollection<Equipment> _equipmentList = new();
     [ObservableProperty] private ObservableCollection<Student> _studentList = new();
     [ObservableProperty] private Equipment? _selectedEquipment;
+    [ObservableProperty] private int _selectedStudentId;
     [ObservableProperty] private Student? _selectedStudent;
     [ObservableProperty] private DateTimeOffset? _expectedReturnDate = DateTimeOffset.Now.AddDays(7);
     [ObservableProperty] private string? _statusMessage;
+
+    partial void OnSelectedStudentIdChanged(int value)
+    {
+        _selectedStudent = StudentList.FirstOrDefault(s => s.Id == value);
+    }
 
     public EquipmentViewModel(
         IEquipmentRepository equipmentRepository,
@@ -37,18 +44,29 @@ public partial class EquipmentViewModel : ObservableObject
         // Connect ViewModels so returns update this view in real time
         _borrowingsViewModel.SetEquipmentViewModel(this);
 
-        _ = LoadDataAsync();
+        // Safely initialize data on startup
+        _ = InitializeDataAsync();
+    }
+
+    private async Task InitializeDataAsync()
+    {
+        try
+        {
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Startup Error: {ex.InnerException?.Message ?? ex.Message}";
+        }
     }
 
     public async Task LoadDataAsync()
     {
-        EquipmentList.Clear();
         var items = await _equipmentRepository.GetAllAsync();
-        foreach (var item in items) EquipmentList.Add(item);
+        EquipmentList = new ObservableCollection<Equipment>(items);
 
-        StudentList.Clear();
         var students = await _studentRepository.GetAllAsync();
-        foreach (var student in students) StudentList.Add(student);
+        StudentList = new ObservableCollection<Student>(students);
     }
 
     [RelayCommand]
@@ -89,7 +107,8 @@ public partial class EquipmentViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            var actualError = ex.InnerException?.Message ?? ex.Message;
+            StatusMessage = $"Borrow Failed: {actualError}";
         }
     }
 }
