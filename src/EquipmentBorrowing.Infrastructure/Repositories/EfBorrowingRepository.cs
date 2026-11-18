@@ -36,6 +36,28 @@ public class EfBorrowingRepository : IBorrowingRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<Borrowing>> GetByStudentIdAsync(int studentId, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Borrowings
+            .Include(b => b.Student)
+            .Include(b => b.Equipment)
+            .Where(b => b.StudentId == studentId)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Borrowing>> GetByEquipmentIdAsync(int equipmentId, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Borrowings
+            .Include(b => b.Student)
+            .Include(b => b.Equipment)
+            .Where(b => b.EquipmentId == equipmentId)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Borrowing?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
@@ -57,5 +79,14 @@ public class EfBorrowingRepository : IBorrowingRepository
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         context.Borrowings.Update(borrowing);
         await context.SaveChangesAsync(cancellationToken);
+    }
+    public async Task<IEnumerable<Borrowing>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Borrowings
+            .Include(b => b.Student)
+            .Include(b => b.Equipment)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 }

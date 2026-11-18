@@ -1,4 +1,8 @@
-﻿using EquipmentBorrowing.Application.Interfaces;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using EquipmentBorrowing.Application.Interfaces;
 using EquipmentBorrowing.Domain;
 
 namespace EquipmentBorrowing.Infrastructure.Repositories;
@@ -16,6 +20,20 @@ public class InMemoryStudentRepository : IStudentRepository
 
     public Task<IEnumerable<Student>> GetAllAsync(CancellationToken cancellationToken = default)
         => Task.FromResult<IEnumerable<Student>>(_students);
+
+    public Task AddAsync(Student student, CancellationToken cancellationToken = default)
+    {
+        _students.Add(student);
+        return Task.CompletedTask;
+    }
+
+    public Task UpdateAsync(Student student, CancellationToken cancellationToken = default)
+    {
+        var idx = _students.FindIndex(s => s.Id == student.Id);
+        if (idx >= 0)
+            _students[idx] = student;
+        return Task.CompletedTask;
+    }
 }
 
 public class InMemoryEquipmentRepository : IEquipmentRepository
@@ -29,11 +47,21 @@ public class InMemoryEquipmentRepository : IEquipmentRepository
     public Task<Equipment?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         => Task.FromResult(_equipmentList.FirstOrDefault(e => e.Id == id));
 
-    public Task UpdateAsync(Equipment equipment, CancellationToken cancellationToken = default)
-        => Task.CompletedTask;
-
     public Task<IEnumerable<Equipment>> GetAllAsync(CancellationToken cancellationToken = default)
         => Task.FromResult<IEnumerable<Equipment>>(_equipmentList);
+
+    public Task AddAsync(Equipment equipment, CancellationToken cancellationToken = default)
+    {
+        _equipmentList.Add(equipment);
+        return Task.CompletedTask;
+    }
+
+    public Task UpdateAsync(Equipment equipment, CancellationToken cancellationToken = default)
+    {
+        var idx = _equipmentList.FindIndex(e => e.Id == equipment.Id);
+        if (idx >= 0) _equipmentList[idx] = equipment;
+        return Task.CompletedTask;
+    }
 }
 
 public class InMemoryBorrowingRepository : IBorrowingRepository
@@ -61,4 +89,22 @@ public class InMemoryBorrowingRepository : IBorrowingRepository
 
     public Task<IEnumerable<Borrowing>> GetActiveBorrowingsAsync(CancellationToken cancellationToken = default)
         => Task.FromResult<IEnumerable<Borrowing>>(_borrowings.Where(b => b.Status == BorrowingStatus.Active).ToList());
+
+    public async Task<IEnumerable<Borrowing>> GetByStudentIdAsync(int studentId, CancellationToken cancellationToken = default)
+    {
+        await Task.CompletedTask;
+        return _borrowings.Where(b => b.StudentId == studentId);
+    }
+
+    public async Task<IEnumerable<Borrowing>> GetByEquipmentIdAsync(int equipmentId, CancellationToken cancellationToken = default)
+    {
+        await Task.CompletedTask;
+        return _borrowings.Where(b => b.EquipmentId == equipmentId);
+    }
+
+    public async Task<IEnumerable<Borrowing>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        await Task.CompletedTask;
+        return _borrowings;
+    }
 }
