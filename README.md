@@ -81,6 +81,14 @@ To keep real credentials out of the repository, you can instead:
 | **Expected Result** | Borrowing record is created with `Active` status, and equipment status updates to unavailable. |
 | **Possible Failure** | Equipment is unavailable, student is barred, or student reached maximum active borrowings limit. |
 
+## Lab Activity 4 Use Cases (UC-06 to UC-09)
+| Use Case | Feature | Summary |
+| :--- | :--- | :--- |
+| **UC-06** | Multi-Item Atomic Checkout | Processes multiple equipment items in a single transaction via BorrowEquipmentService and CheckoutViewModel, rolling back if validation or persistence fails. |
+| **UC-07** | Student Borrowing History | Displays borrowing records for a selected student (GetByStudentIdAsync) via StudentHistoryView and StudentHistoryViewModel. |
+| **UC-08** | Equipment Borrowing History | Displays borrowing records for a selected piece of equipment (GetByEquipmentIdAsync) via EquipmentHistoryView and EquipmentHistoryViewModel. |
+| **UC-09** | Search, Filter & Sort Borrowings | Loads all records (GetAllAsync) in BorrowingSearchViewModel with case-insensitive partial search, status filtering (All, Active, Returned), and ascending/descending sorting by borrowed date or expected return date. |
+
 ---
 
 ## 5. Architecture
@@ -112,7 +120,7 @@ Infrastructure Implementation
 - **DbContext (`EquipmentBorrowingDbContext`)**: Located in `EquipmentBorrowing.Infrastructure/Persistence/`, this manages database sessions and maps core domain models (`Student`, `Equipment`, `Borrowing`) to PostgreSQL tables.
 - **Entity Configurations**: Fluent API configuration classes (`StudentConfiguration.cs`, `EquipmentConfiguration.cs`, `BorrowingConfiguration.cs`) define explicit property constraints, max lengths, delete behaviors (`Restrict`), and foreign key relations safely outside domain entities.
 - **Migrations**: Database schema creation and evolution are handled via version-controlled EF Core migrations (`Migrations/` folder) using the Npgsql provider.
-- **Repositories**: Abstract repository interfaces are implemented via database-backed classes (`EfStudentRepository`, `EfEquipmentRepository`, `EfBorrowingRepository`) leveraging asynchronous LINQ operations (`ToListAsync`, `SaveChangesAsync`, etc.).
+- **Repositories**: Abstract repository interfaces are implemented via database-backed classes (`EfStudentRepository`, `EfEquipmentRepository`, `EfBorrowingRepository`) leveraging asynchronous LINQ operations (`ToListAsync`, `SaveChangesAsync`, etc.). IBorrowingRepository and its implementations also support GetByStudentIdAsync, GetByEquipmentIdAsync, and GetAllAsync with Include(b => b.Student) and Include(b => b.Equipment).
 
 ### Persistence Verification Workflow
 1. **Borrow Operation**: When staff requests equipment through the Avalonia UI, a persistent record is written to the PostgreSQL database, and equipment availability updates atomically.
@@ -150,6 +158,16 @@ Infrastructure Implementation
 3. The ViewModel invokes `ReturnEquipmentService.ReturnAsync(...)`.
 4. The application service locates the active borrowing, validates that it can be returned, updates its status, and marks the corresponding equipment as available again via the repositories.
 5. The interface automatically refreshes both the Equipment and Active Borrowings displays to show the latest synchronized state.
+
+### Student & Equipment Borrowing History Flow (UC-07 & UC-08)
+1. The user navigates to **Student History** or **Equipment History** via `MainWindowViewModel.`
+2. Selecting a student or equipment item loads matching borrowing records asynchronously `(GetByStudentIdAsync or GetByEquipmentIdAsync)` with `Student` and `Equipment` navigation data.
+3. The view displays borrowing details `(Id, BorrowedDate, ExpectedReturnDate, and Status)` and updates the status message.
+
+### Search, Filter, and Sort Borrowings Flow (UC-09)
+1. Navigating to **Search & Filter** loads all borrowing records via `GetAllAsync` into `BorrowingSearchViewModel`.
+2. Entering search text (matching student full name, student number, or equipment name case-insensitively), selecting a status filter `(All, Active, Returned)`, or changing sort criteria `(Borrow Date or Expected Return`, ascending or descending) immediately updates the displayed list.
+3. Clicking **Reset** restores default search, filter, and sort values.
 
 ---
 
@@ -195,7 +213,7 @@ Infrastructure Implementation
 ## 10. Laboratory Activity 4 Summary
 
 ### Overall Activity Summary
-The Campus Equipment Borrowing System evolved from a temporary, volatile state into a robust desktop application backed by a persistent relational database. Using **Entity Framework (EF) Core** and **PostgreSQL** (via the Npgsql provider), the core domain entities (`Student`, `Equipment`, and `Borrowing`) were mapped to relational tables complete with primary keys, foreign key constraints, and normalized structures. By abstracting data access behind repository interfaces (`IStudentRepository`, `IEquipmentRepository`, and `IBorrowingRepository`), the application achieved data durability across restarts without coupling presentation layers or business logic to the storage engine.
+The Campus Equipment Borrowing System evolved from a temporary, volatile state into a robust desktop application backed by a persistent relational database. Using **Entity Framework (EF) Core** and **PostgreSQL** (via the Npgsql provider), the core domain entities (`Student`, `Equipment`, and `Borrowing`) were mapped to relational tables complete with primary keys, foreign key constraints, and normalized structures. By abstracting data access behind repository interfaces (`IStudentRepository`, `IEquipmentRepository`, and `IBorrowingRepository`), the application achieved data durability across restarts without coupling presentation layers or business logic to the storage engine. This foundation also supports multi-item atomic checkout (UC-06), student and equipment borrowing histories (UC-07 and UC-08), and searching, filtering, and sorting borrowings (UC-09) wired through `MainWindow` navigation and dependency injection.
 
 ### Core Architectural Reflections
 1. **Preservation of Architectural Boundaries**
