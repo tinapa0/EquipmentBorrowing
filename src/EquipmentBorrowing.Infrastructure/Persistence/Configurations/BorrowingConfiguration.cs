@@ -26,12 +26,13 @@ public class BorrowingConfiguration : IEntityTypeConfiguration<Borrowing>
                .HasConversion<string>()
                .IsRequired();
 
-        builder.HasOne<Student>()
+        // FIX: Bind directly to the navigation properties to eliminate shadow columns
+        builder.HasOne(b => b.Student)
                .WithMany()
                .HasForeignKey(b => b.StudentId)
                .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne<Equipment>()
+        builder.HasOne(b => b.Equipment)
                .WithMany()
                .HasForeignKey(b => b.EquipmentId)
                .OnDelete(DeleteBehavior.Restrict);

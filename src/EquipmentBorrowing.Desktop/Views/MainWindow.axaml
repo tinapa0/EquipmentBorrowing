@@ -23,6 +23,24 @@
 		<DataTemplate DataType="{x:Type vm:BorrowingsViewModel}">
 			<views:BorrowingsView />
 		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:StudentsViewModel}">
+			<views:StudentsView />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:EquipmentManagementViewModel}">
+			<views:EquipmentManagementView />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:CheckoutViewModel}">
+			<views:CheckoutView />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:StudentHistoryViewModel}">
+			<views:StudentHistoryView />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:EquipmentHistoryViewModel}">
+			<views:EquipmentHistoryView />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:BorrowingSearchViewModel}">
+			<views:BorrowingSearchView />
+		</DataTemplate>
 	</Window.DataTemplates>
 
 	<Grid ColumnDefinitions="220, *">
@@ -38,6 +56,28 @@
 				<Button Content="Active Borrowings"
                         Command="{Binding NavigateToBorrowingsCommand}"
                         Classes="nav"/>
+
+				<Button Content="Student Management"
+						Command="{Binding NavigateToStudentsCommand}"
+						Classes="nav"/>
+
+				<Button Content="Equipment Management"
+						Command="{Binding NavigateToEquipmentManagementCommand}"
+						Classes="nav"/>
+
+				<Button Content="Multi-Item Checkout"
+						Command="{Binding NavigateToCheckoutCommand}"
+						Classes="nav"/>
+				<Button Content="Student History"
+						Command="{Binding NavigateToStudentHistoryCommand}"
+						Classes="nav"/>
+
+				<Button Content="Equipment History"
+						Command="{Binding NavigateToEquipmentHistoryCommand}"
+						Classes="nav"/>
+				<Button Content="Search &amp; Filter"
+						Command="{Binding NavigateToBorrowingSearchCommand}"
+						Classes="nav"/>
 			</StackPanel>
 		</Border>
 

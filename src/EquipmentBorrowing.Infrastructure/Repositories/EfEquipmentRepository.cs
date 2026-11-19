@@ -7,28 +7,39 @@ namespace EquipmentBorrowing.Infrastructure.Repositories;
 
 public class EfEquipmentRepository : IEquipmentRepository
 {
-    private readonly EquipmentBorrowingDbContext _context;
+    private readonly IDbContextFactory<EquipmentBorrowingDbContext> _contextFactory;
 
-    public EfEquipmentRepository(EquipmentBorrowingDbContext context)
+    public EfEquipmentRepository(IDbContextFactory<EquipmentBorrowingDbContext> contextFactory)
     {
-        _context = context;
+        _contextFactory = contextFactory;
     }
+
     public async Task<IEnumerable<Equipment>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.Equipment
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Equipment
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 
     public async Task<Equipment?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await _context.Equipment
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Equipment
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+    }
+
+    public async Task AddAsync(Equipment equipment, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        context.Equipment.Add(equipment);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task UpdateAsync(Equipment equipment, CancellationToken cancellationToken = default)
     {
-        _context.Equipment.Update(equipment);
-        await _context.SaveChangesAsync(cancellationToken);
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        context.Equipment.Update(equipment);
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

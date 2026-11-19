@@ -1,0 +1,60 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:EquipmentBorrowing.Desktop.ViewModels"
+             x:Class="EquipmentBorrowing.Desktop.Views.CheckoutView"
+             x:DataType="vm:CheckoutViewModel">
+
+	<Grid Margin="15" RowDefinitions="Auto, *, Auto, Auto" ColumnDefinitions="*, 350">
+		<!-- Title -->
+		<TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Multi-Item Equipment Checkout (UC-06)" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
+
+		<!-- Left: Selectable Equipment Inventory -->
+		<Border Grid.Row="1" Grid.Column="0" BorderBrush="#DDD" BorderThickness="1" CornerRadius="5" Padding="10" Margin="0,0,15,0">
+			<DockPanel>
+				<TextBlock DockPanel.Dock="Top" Text="1. Select Available Equipment Items" FontWeight="Bold" Margin="0,0,0,8"/>
+				<ListBox ItemsSource="{Binding AvailableEquipment}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal" Spacing="10" Margin="5">
+								<CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+								<TextBlock Text="{Binding Equipment.EquipmentIdentifier}" FontWeight="Bold" VerticalAlignment="Center"/>
+								<TextBlock Text="{Binding Equipment.Name}" VerticalAlignment="Center"/>
+								<TextBlock Text="{Binding Equipment.Description}" Foreground="Gray" VerticalAlignment="Center"/>
+							</StackPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</DockPanel>
+		</Border>
+
+		<!-- Right: Student & Checkout Options Panel -->
+		<Border Grid.Row="1" Grid.Column="1" Background="#F9F9FB" BorderBrush="#DDD" BorderThickness="1" CornerRadius="5" Padding="15">
+			<StackPanel Spacing="15">
+				<TextBlock Text="2. Select Student" FontWeight="Bold" FontSize="14"/>
+				<ComboBox ItemsSource="{Binding Students}" 
+				          SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
+				          HorizontalAlignment="Stretch">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding FullName}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+
+				<TextBlock Text="3. Expected Return Date" FontWeight="Bold" FontSize="14"/>
+				<CalendarDatePicker SelectedDate="{Binding ExpectedReturnDate, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
+
+				<Separator Margin="0,5"/>
+
+				<Button Content="Confirm Multi-Item Checkout" 
+				        Command="{Binding ProcessCheckoutCommand}" 
+				        HorizontalAlignment="Stretch" 
+				        HorizontalContentAlignment="Center"
+				        Background="#007ACC" Foreground="White"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Status Footer -->
+		<TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding StatusMessage}" Foreground="DarkBlue" FontWeight="Bold" Margin="0,15,0,0"/>
+	</Grid>
+</UserControl>

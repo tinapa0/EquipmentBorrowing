@@ -11,22 +11,24 @@ namespace EquipmentBorrowing.Infrastructure.Repositories;
 
 public class EfBorrowingRepository : IBorrowingRepository
 {
-    private readonly EquipmentBorrowingDbContext _context;
+    private readonly IDbContextFactory<EquipmentBorrowingDbContext> _contextFactory;
 
-    public EfBorrowingRepository(EquipmentBorrowingDbContext context)
+    public EfBorrowingRepository(IDbContextFactory<EquipmentBorrowingDbContext> contextFactory)
     {
-        _context = context;
+        _contextFactory = contextFactory;
     }
 
     public async Task<int> GetActiveCountByStudentIdAsync(int studentId, CancellationToken cancellationToken = default)
     {
-        return await _context.Borrowings
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Borrowings
             .CountAsync(b => b.StudentId == studentId && b.Status == BorrowingStatus.Active, cancellationToken);
     }
 
     public async Task<IEnumerable<Borrowing>> GetActiveBorrowingsAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.Borrowings
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Borrowings
             .AsNoTracking()
             .Include(b => b.Equipment)
             .Include(b => b.Student)
@@ -34,9 +36,32 @@ public class EfBorrowingRepository : IBorrowingRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<Borrowing>> GetByStudentIdAsync(int studentId, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Borrowings
+            .Include(b => b.Student)
+            .Include(b => b.Equipment)
+            .Where(b => b.StudentId == studentId)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Borrowing>> GetByEquipmentIdAsync(int equipmentId, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Borrowings
+            .Include(b => b.Student)
+            .Include(b => b.Equipment)
+            .Where(b => b.EquipmentId == equipmentId)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Borrowing?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await _context.Borrowings
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Borrowings
             .Include(b => b.Equipment)
             .Include(b => b.Student)
             .FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
@@ -44,13 +69,24 @@ public class EfBorrowingRepository : IBorrowingRepository
 
     public async Task AddAsync(Borrowing borrowing, CancellationToken cancellationToken = default)
     {
-        await _context.Borrowings.AddAsync(borrowing, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await context.Borrowings.AddAsync(borrowing, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task UpdateAsync(Borrowing borrowing, CancellationToken cancellationToken = default)
     {
-        _context.Borrowings.Update(borrowing);
-        await _context.SaveChangesAsync(cancellationToken);
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        context.Borrowings.Update(borrowing);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+    public async Task<IEnumerable<Borrowing>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Borrowings
+            .Include(b => b.Student)
+            .Include(b => b.Equipment)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 }
