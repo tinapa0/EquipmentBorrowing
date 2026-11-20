@@ -45,11 +45,15 @@ public partial class App : Avalonia.Application
         // 3. Application Services
         services.AddTransient<BorrowEquipmentService>();
         services.AddTransient<ReturnEquipmentService>();
+        services.AddTransient<StudentManagementService>();
+        services.AddTransient<EquipmentManagementService>();
 
         // 4. Singletons maintain UI state across navigation views
         services.AddSingleton<EquipmentViewModel>();
         services.AddSingleton<BorrowingsViewModel>();
         services.AddSingleton<MainWindowViewModel>();
+        services.AddTransient<StudentsViewModel>();
+        services.AddTransient<EquipmentManagementViewModel>();
 
         var provider = services.BuildServiceProvider();
 

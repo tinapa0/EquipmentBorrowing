@@ -33,7 +33,7 @@ public partial class CheckoutViewModel : ObservableObject
 
     [ObservableProperty] private ObservableCollection<SelectableEquipmentItem> _availableEquipment = new();
 
-    [ObservableProperty] private DateTimeOffset _expectedReturnDate = DateTimeOffset.Now.AddDays(7);
+    [ObservableProperty] private DateTime? _expectedReturnDate = DateTime.Today.AddDays(7);
     [ObservableProperty] private string _statusMessage = string.Empty;
 
     public CheckoutViewModel(
@@ -82,9 +82,15 @@ public partial class CheckoutViewModel : ObservableObject
             return;
         }
 
+        if (!ExpectedReturnDate.HasValue)
+        {
+            StatusMessage = "Error: Please select an expected return date.";
+            return;
+        }
+
         try
         {
-            DateTime returnDateDateTime = ExpectedReturnDate.DateTime;
+            DateTime returnDateDateTime = ExpectedReturnDate.Value;
             await _borrowService.ExecuteAsync(SelectedStudent.Id, selectedIds, returnDateDateTime);
 
             StatusMessage = $"Successfully checked out {selectedIds.Count} item(s) for {SelectedStudent.FullName}!";
