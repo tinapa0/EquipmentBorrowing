@@ -4,20 +4,21 @@
              x:Class="EquipmentBorrowing.Desktop.Views.StudentsView"
              x:DataType="vm:StudentsViewModel">
 
-	<Grid Margin="15" RowDefinitions="Auto, *, Auto, Auto" ColumnDefinitions="*, 300">
+	<Grid Margin="15" RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, 340">
 		<!-- Title -->
-		<TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Student Management" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
+		<TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Student Management (UC-12 to UC-14)" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
 
 		<!-- Left: Student List -->
 		<Border Grid.Row="1" Grid.Column="0" BorderBrush="#DDD" BorderThickness="1" CornerRadius="5" Padding="10" Margin="0,0,15,0">
 			<DockPanel>
-				<TextBlock DockPanel.Dock="Top" Text="Registered Students" FontWeight="Bold" Margin="0,0,0,8"/>
+				<TextBlock DockPanel.Dock="Top" Text="Registered Students (Select to Edit or Change Eligibility)" FontWeight="Bold" Margin="0,0,0,8"/>
 				<ListBox ItemsSource="{Binding Students}" SelectedItem="{Binding SelectedStudent, Mode=TwoWay}" SelectionMode="Single">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal" Spacing="10">
 								<TextBlock Text="{Binding FullName}" FontWeight="Bold"/>
 								<TextBlock Text="{Binding StudentNumber}" Foreground="Gray"/>
+								<TextBlock Text="{Binding ContactInfo}" Foreground="DimGray"/>
 								<TextBlock Text="{Binding IsAllowedToBorrow, StringFormat='[Eligible: {0}]'}" Foreground="Green"/>
 							</StackPanel>
 						</DataTemplate>
@@ -26,24 +27,39 @@
 			</DockPanel>
 		</Border>
 
-		<!-- Right: Register Panel -->
+		<!-- Right: Register, Edit & Eligibility Panel -->
 		<Border Grid.Row="1" Grid.Column="1" Background="#F9F9FB" BorderBrush="#DDD" BorderThickness="1" CornerRadius="5" Padding="15">
-			<StackPanel Spacing="12">
-				<TextBlock Text="Register New Student" FontWeight="Bold" FontSize="14"/>
+			<ScrollViewer>
+				<StackPanel Spacing="10">
+					<TextBlock Text="Student Details" FontWeight="Bold" FontSize="14"/>
 
-				<TextBlock Text="Full Name:"/>
-				<TextBox Text="{Binding FullName, Mode=TwoWay}"/>
+					<TextBlock Text="Full Name *"/>
+					<TextBox Text="{Binding FullName, Mode=TwoWay}" Watermark="e.g., Juan Dela Cruz"/>
 
-				<TextBlock Text="Student Number:"/>
-				<TextBox Text="{Binding StudentNumber, Mode=TwoWay}"/>
+					<TextBlock Text="Student Number *"/>
+					<TextBox Text="{Binding StudentNumber, Mode=TwoWay}" Watermark="e.g., 2026-0003"/>
 
-				<CheckBox Content="Is Allowed to Borrow" IsChecked="{Binding IsAllowedToBorrow, Mode=TwoWay}"/>
+					<TextBlock Text="Contact Info (Optional)"/>
+					<TextBox Text="{Binding ContactInfo, Mode=TwoWay}" Watermark="Leave blank to clear"/>
 
-				<Button Content="Register Student" Command="{Binding RegisterStudentCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
-			</StackPanel>
+					<CheckBox Content="Default Eligible on Register" IsChecked="{Binding IsAllowedToBorrow, Mode=TwoWay}"/>
+
+					<Button Content="Register New Student (UC-12)" Command="{Binding RegisterStudentCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+					<Button Content="Save Changes to Selected (UC-13)" Command="{Binding UpdateStudentCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+					<Button Content="Clear Selection / Form" Command="{Binding ClearFormCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+
+					<Separator Margin="0,6"/>
+					<TextBlock Text="Borrowing Eligibility (UC-14)" FontWeight="Bold" FontSize="13"/>
+
+					<Grid ColumnDefinitions="*, *" ColumnSpacing="8">
+						<Button Grid.Column="0" Content="Permit" Command="{Binding PermitBorrowingCommand}" CommandParameter="{Binding SelectedStudent}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+						<Button Grid.Column="1" Content="Restrict" Command="{Binding RestrictBorrowingCommand}" CommandParameter="{Binding SelectedStudent}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+					</Grid>
+				</StackPanel>
+			</ScrollViewer>
 		</Border>
 
 		<!-- Status Message Footer -->
-		<TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding StatusMessage}" Foreground="DarkBlue" Margin="0,15,0,0"/>
+		<TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding StatusMessage}" TextWrapping="Wrap" Foreground="DarkBlue" Margin="0,12,0,0"/>
 	</Grid>
 </UserControl>
